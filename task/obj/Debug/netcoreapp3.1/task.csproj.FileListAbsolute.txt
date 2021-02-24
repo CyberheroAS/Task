@@ -1,0 +1,13 @@
+C:\Users\zizik\source\repos\task\task\bin\Debug\netcoreapp3.1\task.exe
+C:\Users\zizik\source\repos\task\task\bin\Debug\netcoreapp3.1\task.deps.json
+C:\Users\zizik\source\repos\task\task\bin\Debug\netcoreapp3.1\task.runtimeconfig.json
+C:\Users\zizik\source\repos\task\task\bin\Debug\netcoreapp3.1\task.runtimeconfig.dev.json
+C:\Users\zizik\source\repos\task\task\bin\Debug\netcoreapp3.1\task.dll
+C:\Users\zizik\source\repos\task\task\bin\Debug\netcoreapp3.1\task.pdb
+C:\Users\zizik\source\repos\task\task\obj\Debug\netcoreapp3.1\task.csprojAssemblyReference.cache
+C:\Users\zizik\source\repos\task\task\obj\Debug\netcoreapp3.1\task.AssemblyInfoInputs.cache
+C:\Users\zizik\source\repos\task\task\obj\Debug\netcoreapp3.1\task.AssemblyInfo.cs
+C:\Users\zizik\source\repos\task\task\obj\Debug\netcoreapp3.1\task.csproj.CoreCompileInputs.cache
+C:\Users\zizik\source\repos\task\task\obj\Debug\netcoreapp3.1\task.dll
+C:\Users\zizik\source\repos\task\task\obj\Debug\netcoreapp3.1\task.pdb
+C:\Users\zizik\source\repos\task\task\obj\Debug\netcoreapp3.1\task.genruntimeconfig.cache
