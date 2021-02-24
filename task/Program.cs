@@ -12,14 +12,15 @@ using System.Threading;
 
 namespace task
 {
-    public class MyAnswer:IComparable
+    public class MyAnswer : IComparable
     {
         public int amount_answer;
         public string triplet_answer;
+        
 
         public override string ToString()
         {
-            return " " + triplet_answer + " " + amount_answer + " раз, ";            
+            return " " + triplet_answer + " " + amount_answer + " раз, ";
         }
 
         public int CompareTo(object obj)
@@ -47,18 +48,21 @@ namespace task
             return 0;
         }
     }
-     class Program
+    class Program
     {
-        static string triplet = "";                                    //текущий триплет
-        static SortedSet<MyAnswer> myList = new SortedSet<MyAnswer>();
-        static string[] word_mass;                                    //массив для слов файла
-        static string word;                                           //текущее слово из которого берем триплеты
-        static string text = "";                                     //весь текст файла
-        static StreamReader sr = new StreamReader("D:\\ft2.txt");
+        //private static SortedSet<MyAnswer> myList = new SortedSet<MyAnswer>();
+        private static string text = "";
+        private static StreamReader sr = new StreamReader("D:\\fortask.txt");
 
 
-        public static void mythread1()
-        {
+        public static SortedSet<MyAnswer> FindTriplets(string txt)
+        {          
+            string word;
+            SortedSet<MyAnswer> result = new SortedSet<MyAnswer>();
+            txt = Regex.Replace(txt, @"[^\p{L}0-9 -]", "");
+            txt = txt.Trim();
+            string[] word_mass = txt.Split(' ');
+            string triplet = "";
             for (int i = 0; i < word_mass.Length; i++)
             {
                 word = word_mass[i];
@@ -68,62 +72,60 @@ namespace task
                         triplet += word[j];
                     if ((triplet.Length == 3) && (j != word.Length))
                     {
-                        int amount = new Regex(triplet).Matches(text).Count;
-                        myList.Add(new MyAnswer() { triplet_answer = triplet, amount_answer = amount });
+                        int amount = new Regex(triplet).Matches(txt).Count;
+                        //lock (myList)
+                        result.Add(new MyAnswer() { triplet_answer = triplet, amount_answer = amount });
                         triplet = triplet.Remove(0, 1);
                     }
                 }
-                triplet = "";
-                word = "";
+                triplet = "";                
             }
+            return result;
         }
 
-        public static void mythread2()
+        public static async List<MyAnswer> MergeSets(List<Task<SortedSet<MyAnswer>>> sets)
         {
-            List<MyAnswer> list = new List<MyAnswer>(myList);
-            for (int i = 0; i < 10; i++)
+            SortedSet<MyAnswer> result = new SortedSet<MyAnswer>();
+            foreach(Task<SortedSet<MyAnswer>> tsk in sets)
             {
-                Console.Write(list[i]);
+                SortedSet<MyAnswer> set = await tsk;
+                foreach(MyAnswer answer in set)
+                {
+                    foreach(MyAnswer res in result)
+                    {
+                        if (res.triplet_answer.Equals(answer))
+                        {
+                            res.amount_answer += answer.amount_answer;
+                        }
+                    }
+                } 
             }
+            
         }
-        
-       /* public static void mythread3()
-        {
-            while (sr.EndOfStream != true)
-            {
-                text += sr.ReadLine();
-            }
-            text = Regex.Replace(text, @"[^\p{L}0-9 -]", "");
-            text = text.Trim();
-            word_mass = text.Split(' ');
-        } */
-
 
         static void Main(string[] args)
         {
             Console.ReadKey(true);
+            List<Task<SortedSet<MyAnswer>>> result_list = new List<Task<SortedSet<MyAnswer>>>();
             Stopwatch stopwatch = new Stopwatch();
             stopwatch.Start();
-            Thread thread1 = new Thread(mythread1);
-            Thread thread2 = new Thread(mythread2);
-            //Thread thread3 = new Thread(mythread3);
-             while (sr.EndOfStream != true)
-             {
-                 text += sr.ReadLine();
-             }
-             text = Regex.Replace(text, @"[^\p{L}0-9 -]", "");
-             text = text.Trim();                                  
-             word_mass = text.Split(' ');  
-           // thread3.Start();
-           // thread3.Join();
-            thread1.Start();
-            thread1.Join();
-            thread2.Start();            
-            thread2.Join();
-            //Parallel.Invoke(mythread1, mythread2);
+            while (sr.EndOfStream != true)
+            {
+                text = sr.ReadLine();
+                Task<SortedSet<MyAnswer>> task = Task<SortedSet<MyAnswer>>.Factory.StartNew(() => FindTriplets(text));
+                task.Start();
+                result_list.Add(task);
+                text = "";
+            }
+            List<MyAnswer> list = new List<MyAnswer>(result_list);
+            for (int i = 0; i < 10; i++)
+            {
+                Console.Write(list[i]);
+            }
             stopwatch.Stop();
             Console.WriteLine("\r \n" + stopwatch.ElapsedMilliseconds + " ms.");
             Console.ReadLine();
         }
     }
 }
+
